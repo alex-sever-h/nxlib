@@ -51,8 +51,8 @@ X11_RGBTXT=/usr/share/X11/rgb.txt
 # is possible (as libX11.so would be replaced), and
 # the link command is changed from '-lX11' to '-lNX11 -lnano-X'
 LIBNAME=NX11
-xINSTALL_DIR=.
-INSTALL_DIR=/usr/local/lib
+INSTALL_DIR=$(RTEMS_MAKEFILE_PATH)
+yINSTALL_DIR=/usr/local/lib
 
 # set to Y to make shared libNX11.so library, shared lib dependencies
 SHAREDLIB=N
@@ -63,8 +63,8 @@ SOEXTRALIBS = -L$(MWIN_LIB) -lnano-X
 INCLUDE_XRM=Y
 
 # compiler flags
-CC = gcc
-LN = ln -s
+CC ?= gcc
+LN ?= ld -s
 MV = mv
 CP = cp -p
 RM = rm -f
@@ -75,7 +75,8 @@ CFLAGS += -DX11_FONT_DIR2=\"$(X11_FONT_DIR2)\"
 CFLAGS += -DX11_FONT_DIR3=\"$(X11_FONT_DIR3)\"
 CFLAGS += -DX11_RGBTXT=\"$(X11_RGBTXT)\"
 xCFLAGS += -O2 -fno-strength-reduce
-CFLAGS += -O3
+yCFLAGS += -O3
+CFLAGS += -O0
 
 OBJS = DestWind.o MapWindow.o NextEvent.o OpenDis.o ClDisplay.o\
 	Window.o CrGC.o FreeGC.o StName.o Sync.o Flush.o CrWindow.o\
@@ -133,14 +134,16 @@ lib$(LIBNAME).so.$(SOLIBREV): $(OBJS)
 	$(MV) $@ lib$(LIBNAME).so
 
 install: $(LIBS)
-	$(RM) $(INSTALL_DIR)/lib$(LIBNAME).so; \
-	$(CP) lib$(LIBNAME).so $(INSTALL_DIR)
+#	$(RM) $(INSTALL_DIR)/lib$(LIBNAME).so; \
+#	$(CP) lib$(LIBNAME).so $(INSTALL_DIR)
 #	@MAJREV=`expr $(SOLIBREV) : '\(.*\)\.'`; set -x; \
 #	$(RM) $(INSTALL_DIR)/lib$(LIBNAME).so.$$MAJREV; \
 	$(MV) lib$(LIBNAME).so.$$MAJREV $(INSTALL_DIR)
 #	$(RM) $(INSTALL_DIR)/lib$(LIBNAME).so.$(SOLIBREV); \
 	$(MV) lib$(LIBNAME).so.$(SOLIBREV) $(INSTALL_DIR)
-#	$(MV) lib$(LIBNAME).a $(INSTALL_DIR)
+	$(RM) $(INSTALL_DIR)/lib/lib$(LIBNAME).a
+	$(CP) lib$(LIBNAME).a $(INSTALL_DIR)/lib/lib$(LIBNAME).a
+	$(CP) X11 $(INSTALL_DIR)/lib/include/X11 -r
 
 clean: cleanlibs
 	$(RM) *.o *~
