@@ -143,7 +143,7 @@ install: $(LIBS)
 	$(MV) lib$(LIBNAME).so.$(SOLIBREV) $(INSTALL_DIR)
 	$(RM) $(INSTALL_DIR)/lib/lib$(LIBNAME).a
 	$(CP) lib$(LIBNAME).a $(INSTALL_DIR)/lib/lib$(LIBNAME).a
-	$(CP) X11 $(INSTALL_DIR)/lib/include/X11 -r
+	$(CP) X11 $(INSTALL_DIR)/lib/include/ -r
 
 clean: cleanlibs
 	$(RM) *.o *~
