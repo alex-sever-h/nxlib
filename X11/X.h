@@ -216,7 +216,8 @@ are reserved in the protocol for errors and replies. */
 #define ColormapNotify		32
 #define ClientMessage		33
 #define MappingNotify		34
-#define LASTEvent		35	/* must be bigger than any event # */
+#define GenericEvent		35
+#define LASTEvent		36	/* must be bigger than any event # */
 
 
 /* Key masks. Used as modifiers to GrabButton and GrabKey, results of QueryPointer,
@@ -299,9 +300,13 @@ are reserved in the protocol for errors and replies. */
 
 /* protocol families */
 
-#define FamilyInternet		0
+#define FamilyInternet		0	/* IPv4 */
 #define FamilyDECnet		1
 #define FamilyChaos		2
+#define FamilyInternet6		6	/* IPv6 */
+
+/* authentication families not tied to a specific protocol */
+#define FamilyServerInterpreted 5
 
 /* Property notification */
 

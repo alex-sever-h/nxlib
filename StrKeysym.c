@@ -6,13 +6,13 @@
 #include "X11/Xutil.h"
 #include "keysymstr.h"
 
-#if linux
+//#if linux
 #include <stdlib.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
-#include <linux/keyboard.h>
-#include <linux/kd.h>
+#include <rtems/keyboard.h>
+#include <rtems/kd.h>
 
 #define KEYBOARD "/dev/tty0"		/* device to get keymappings from*/
 
@@ -21,7 +21,7 @@
 static unsigned short	os_keymap[NUM_VGAKEYMAPS][NR_KEYS];
 static MWKEYMOD modstate;
 static int map_loaded = 0;
-#endif /* linux*/
+//#endif /* linux*/
 
 /* Standard keymapings for kernel values */
 /* (from microwin/src/drivers/keymap_standard.h)*/
@@ -59,7 +59,7 @@ MWKEY_LMETA, MWKEY_RMETA, MWKEY_MENU					/* 125*/
 static void
 LoadKernelKeymaps(void)
 {
-#if linux
+  //#if linux
 	int 		map, i;
 	struct kbentry 	entry;
 	char *		kbd;
@@ -107,13 +107,14 @@ LoadKernelKeymaps(void)
 
 	close(fd);
 	map_loaded = 1;
-#endif /* linux*/
+	//#endif /* linux*/
 }
 
 /* translate a scancode and modifier state to an MWKEY*/
 static MWKEY
 TranslateScancode(int scancode)
 {
+  //#if linux
 	unsigned short	mwkey = 0;
 	int		map = 0;
 
@@ -198,6 +199,7 @@ TranslateScancode(int scancode)
 
 	/* DPRINTF("TranslateScancode %02x to mwkey %d\n", scancode, mwkey); */
 	return mwkey;
+	//#endif
 }
 
 static struct {
@@ -309,6 +311,7 @@ int
 XLookupString(XKeyEvent *event, char *buffer, int nbytes, KeySym *keysym,
 	XComposeStatus *status)
 {
+  //#if linux
 	KeySym k;
 
 	modstate &= 0xffff ^ MWKMOD_SHIFT;
@@ -362,6 +365,7 @@ XLookupString(XKeyEvent *event, char *buffer, int nbytes, KeySym *keysym,
 	if (nbytes > 0)
 		buffer[0] = '\0';
 	return 0;
+	//#endif
 }
 
 /* Freeking ugly! */

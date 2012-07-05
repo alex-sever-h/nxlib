@@ -70,6 +70,8 @@ from The Open Group.
 #define RConst /**/
 #endif
 
+
+extern int      _XOpenFile(_Xconst char *path, int flags);
 extern XrmQuark _XrmInternalStringToQuark();
 
 /*
