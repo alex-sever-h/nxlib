@@ -21,11 +21,12 @@ printc(char *str, XCharStruct *cs)
 }
 
 int
-main(int ac, char **av)
+rtems_main(int ac, char **av)
 {
 	Display *d;
 	XFontStruct *fs;
 	char *font;
+	XGCValues G={ 6,0 ,~0L,0,1} ;
 
 	if (ac > 1)
 		font = av[1];
@@ -33,6 +34,12 @@ main(int ac, char **av)
 	d = XOpenDisplay(NULL);
 	if (!d)
 		exit(1);
+
+	Window w = XCreateSimpleWindow(d,w,0,0,100,100,0,0,0);
+	GC g = XCreateGC(d,w,829,&G);
+
+	XDrawString(d,w,g,100/3,100/2,"hello world",11);
+
 	fs = XLoadQueryFont(d, font);
 	if (fs) {
 		int i, size;

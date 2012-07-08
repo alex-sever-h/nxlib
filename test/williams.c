@@ -1,5 +1,7 @@
 #include <X11/Xlib.h>
 #include <unistd.h>
+#include <sys/libkern.h>
+
 typedef long O; typedef struct                    { O b,f,u,s,c,a,t,e,d; } C;
 Display *d; Window w; GC g; XEvent e;
 char Q[] = "Level %d   Score %d", m[222];
@@ -57,7 +59,7 @@ A]; }Ne(l,30); Y==1){ E;K; } else    c=l.t=0;} Y==1&&h<H    -75&&!N(p*77)){ do{ 
                              B=sprintf(m,Q,v,S); XDrawString(d,w
                                      ,g,W/3,H/2,m,B); } }
 
-main ()
+rtems_main ()
 {
 O i=2;
 d=XOpenDisplay(0);
@@ -66,7 +68,7 @@ R i--) XMapWindow(d,w=XCreateSimpleWindow(d,w,0,0,W,H,0,0,0));
 XSelectInput(d,w,4|1<<15);
 XMaskEvent(d,1<<15,&e);
 g=XCreateGC(d,w,829,&G);
-srandom(time(0));
+//srandom(time(0));
 J();
 puts(m);
 }
