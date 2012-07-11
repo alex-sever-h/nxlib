@@ -78,6 +78,28 @@ xCFLAGS += -O2 -fno-strength-reduce
 yCFLAGS += -O3
 CFLAGS += -O0
 
+# install directories for headers and libraries
+#ifeq ($(ARCH), RTEMS)
+  INSTALL_PREFIX  = INSTALL_PREFIX_SHOULD_NOT_BE_USED_FOR_RTEMS 
+  INSTALL_OWNER1  = 
+  INSTALL_OWNER2  = 
+  HDRINSTALLDIR = $(RTEMS_MAKEFILE_PATH)/lib/include/X11
+  LIBINSTALLDIR = $(RTEMS_MAKEFILE_PATH)/lib
+  BININSTALLDIR = $(RTEMS_MAKEFILE_PATH)/bin
+#else
+#  INSTALL_PREFIX  = /usr
+#  INSTALL_OWNER1  = -o root -g root
+#  INSTALL_OWNER2  = -o root -g bin
+#  HDRINSTALLDIR = $(INSTALL_PREFIX)/include/microwin
+#  LIBINSTALLDIR = $(INSTALL_PREFIX)/lib
+#  BININSTALLDIR = $(INSTALL_PREFIX)/bin
+#endif
+
+INSTALL_DIR_D   = install -c -m 755 $(INSTALL_OWNER1) -d
+INSTALL_HDR   = install -c -m 644 $(INSTALL_OWNER2)
+INSTALL_LIB   = install -c -m 644 $(INSTALL_OWNER2)
+INSTALL_BIN   = install -c -m 755 $(INSTALL_OWNER2)
+
 OBJS = DestWind.o MapWindow.o NextEvent.o OpenDis.o ClDisplay.o\
 	Window.o CrGC.o FreeGC.o StName.o Sync.o Flush.o CrWindow.o\
 	Text.o DrLine.o DrLines.o DrPoint.o DrRect.o DrArc.o\
@@ -141,9 +163,17 @@ install: $(LIBS)
 	$(MV) lib$(LIBNAME).so.$$MAJREV $(INSTALL_DIR)
 #	$(RM) $(INSTALL_DIR)/lib$(LIBNAME).so.$(SOLIBREV); \
 	$(MV) lib$(LIBNAME).so.$(SOLIBREV) $(INSTALL_DIR)
-	$(RM) $(INSTALL_DIR)/lib/lib$(LIBNAME).a
-	$(CP) lib$(LIBNAME).a $(INSTALL_DIR)/lib/lib$(LIBNAME).a
-	$(CP) X11 $(INSTALL_DIR)/lib/include/ -r
+	
+	echo "Installing headers ..."
+	$(INSTALL_DIR_D) $(HDRINSTALLDIR)
+	$(INSTALL_HDR)   $(X11_INCLUDE)/X11/*.h $(HDRINSTALLDIR)
+	
+	echo "Installing libNX11 ..."
+	$(INSTALL_LIB) lib$(LIBNAME).a $(LIBINSTALLDIR)/lib$(LIBNAME).a
+	
+#	$(RM) $(INSTALL_DIR)/lib/lib$(LIBNAME).a
+#	$(CP) lib$(LIBNAME).a $(INSTALL_DIR)/lib/lib$(LIBNAME).a
+#	$(CP) X11 $(INSTALL_DIR)/lib/include/ -r
 
 clean: cleanlibs
 	$(RM) *.o *~

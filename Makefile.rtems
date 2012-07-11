@@ -6,7 +6,6 @@
 include $(RTEMS_MAKEFILE_PATH)/Makefile.inc
 # The following picks up LDFLAGS, etc for this BSP
 include $(RTEMS_CUSTOM)
-include $(PROJECT_ROOT)/make/leaf.cfg
 
 
 export STRIP = $(AS:as=strip)
@@ -27,6 +26,7 @@ clean:
 	#rm -rf rtems/rootfs rtems/FilesystemImage* rtems/stamp-filesystem
 
 var:
+	@echo ARCH=$(ARCH)
 	@echo PROJECT_ROOT=$(PROJECT_ROOT)
 	@echo HDRINSTALLDIR=$(HDRINSTALLDIR)
 	@echo LIBINSTALLDIR=$(LIBINSTALLDIR)
