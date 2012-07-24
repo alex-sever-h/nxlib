@@ -65,7 +65,7 @@ MWKEY_LMETA, MWKEY_RMETA, MWKEY_MENU					/* 125*/
 static void
 LoadKernelKeymaps(void)
 {
-  //#if linux
+  #if linux | __rtems__
 	int 		map, i;
 	struct kbentry 	entry;
 	char *		kbd;
@@ -113,14 +113,13 @@ LoadKernelKeymaps(void)
 
 	close(fd);
 	map_loaded = 1;
-	//#endif /* linux*/
+	#endif /* linux | __rtems__*/
 }
 
 /* translate a scancode and modifier state to an MWKEY*/
 static MWKEY
 TranslateScancode(int scancode)
 {
-  //#if linux
 	unsigned short	mwkey = 0;
 	int		map = 0;
 
@@ -205,7 +204,6 @@ TranslateScancode(int scancode)
 
 	/* DPRINTF("TranslateScancode %02x to mwkey %d\n", scancode, mwkey); */
 	return mwkey;
-	//#endif
 }
 
 static struct {
@@ -317,7 +315,6 @@ int
 XLookupString(XKeyEvent *event, char *buffer, int nbytes, KeySym *keysym,
 	XComposeStatus *status)
 {
-  //#if linux
 	KeySym k;
 
 	modstate &= 0xffff ^ MWKMOD_SHIFT;
@@ -371,7 +368,6 @@ XLookupString(XKeyEvent *event, char *buffer, int nbytes, KeySym *keysym,
 	if (nbytes > 0)
 		buffer[0] = '\0';
 	return 0;
-	//#endif
 }
 
 /* Freeking ugly! */

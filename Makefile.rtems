@@ -8,11 +8,16 @@ include $(RTEMS_MAKEFILE_PATH)/Makefile.inc
 include $(RTEMS_CUSTOM)
 include $(CONFIG.CC)
 
-INSTALL_DIR=$(RTEMS_MAKEFILE_PATH)
 
-HDRINSTALLDIR = $(INSTALL_DIR)/lib/include
-LIBINSTALLDIR = $(INSTALL_DIR)/lib
-BININSTALLDIR = $(INSTALL_DIR)/bin
+# X11 headers location
+X11_INCLUDE=.
+# NXLib library name
+LIBNAME=X11
+
+
+HDRINSTALLDIR = $(RTEMS_MAKEFILE_PATH)/lib/include
+LIBINSTALLDIR = $(RTEMS_MAKEFILE_PATH)/lib
+BININSTALLDIR = $(RTEMS_MAKEFILE_PATH)/bin
 
 INSTALL_DIR = install -c -m 755  -d
 INSTALL_HDR = install -c -m 644
@@ -35,10 +40,10 @@ VARIABLES_SET += AR="$(AR)"
 VARIABLES_SET += MWIN_INCLUDE=$(RTEMS_MAKEFILE_PATH)/lib/include/ 
 VARIABLES_SET += MWIN_LIB=$(RTEMS_MAKEFILE_PATH)/lib/ 
 
-VARIABLES_SET += X11_INCLUDE=. 
+VARIABLES_SET += X11_INCLUDE=$(X11_INCLUDE)
 VARIABLES_SET += X11_RGBTXT=fonts/rgb.txt 
 
-VARIABLES_SET += LIBNAME=X11 
+VARIABLES_SET += LIBNAME=$(LIBNAME)
 VARIABLES_SET += SHAREDLIB=N 
 
 
@@ -55,7 +60,9 @@ install:
 
 clean:
 	$(MAKE) -f Makefile $@ $(VARIABLES_SET)
-	#rm -rf rtems/rootfs rtems/FilesystemImage* rtems/stamp-filesystem
+
+distclean:
+	$(MAKE) -f Makefile $@ $(VARIABLES_SET)
 
 var:
 	@echo ARCH=$(ARCH)
