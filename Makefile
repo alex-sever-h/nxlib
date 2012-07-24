@@ -51,8 +51,8 @@ X11_RGBTXT=/usr/share/X11/rgb.txt
 # is possible (as libX11.so would be replaced), and
 # the link command is changed from '-lX11' to '-lNX11 -lnano-X'
 LIBNAME=NX11
-INSTALL_DIR=$(RTEMS_MAKEFILE_PATH)
-yINSTALL_DIR=/usr/local/lib
+xINSTALL_DIR=.
+INSTALL_DIR=/usr/local/lib
 
 # set to Y to make shared libNX11.so library, shared lib dependencies
 SHAREDLIB=N
@@ -63,8 +63,9 @@ SOEXTRALIBS = -L$(MWIN_LIB) -lnano-X
 INCLUDE_XRM=Y
 
 # compiler flags
-CC ?= gcc
-LN ?= ld -s
+CC = gcc
+LN = ln -s
+AR = ar
 MV = mv
 CP = cp -p
 RM = rm -f
@@ -75,30 +76,7 @@ CFLAGS += -DX11_FONT_DIR2=\"$(X11_FONT_DIR2)\"
 CFLAGS += -DX11_FONT_DIR3=\"$(X11_FONT_DIR3)\"
 CFLAGS += -DX11_RGBTXT=\"$(X11_RGBTXT)\"
 xCFLAGS += -O2 -fno-strength-reduce
-yCFLAGS += -O3
-CFLAGS += -O0
-
-# install directories for headers and libraries
-#ifeq ($(ARCH), RTEMS)
-  INSTALL_PREFIX  = INSTALL_PREFIX_SHOULD_NOT_BE_USED_FOR_RTEMS 
-  INSTALL_OWNER1  = 
-  INSTALL_OWNER2  = 
-  HDRINSTALLDIR = $(RTEMS_MAKEFILE_PATH)/lib/include/X11
-  LIBINSTALLDIR = $(RTEMS_MAKEFILE_PATH)/lib
-  BININSTALLDIR = $(RTEMS_MAKEFILE_PATH)/bin
-#else
-#  INSTALL_PREFIX  = /usr
-#  INSTALL_OWNER1  = -o root -g root
-#  INSTALL_OWNER2  = -o root -g bin
-#  HDRINSTALLDIR = $(INSTALL_PREFIX)/include/microwin
-#  LIBINSTALLDIR = $(INSTALL_PREFIX)/lib
-#  BININSTALLDIR = $(INSTALL_PREFIX)/bin
-#endif
-
-INSTALL_DIR_D   = install -c -m 755 $(INSTALL_OWNER1) -d
-INSTALL_HDR   = install -c -m 644 $(INSTALL_OWNER2)
-INSTALL_LIB   = install -c -m 644 $(INSTALL_OWNER2)
-INSTALL_BIN   = install -c -m 755 $(INSTALL_OWNER2)
+CFLAGS += -O3
 
 OBJS = DestWind.o MapWindow.o NextEvent.o OpenDis.o ClDisplay.o\
 	Window.o CrGC.o FreeGC.o StName.o Sync.o Flush.o CrWindow.o\
@@ -142,7 +120,7 @@ all: $(LIBS)
 
 # static NXLIB library
 lib$(LIBNAME).a: keysymstr.h $(OBJS)
-	ar r lib$(LIBNAME).a $(OBJS)
+	$(AR) r lib$(LIBNAME).a $(OBJS)
 
 # shared X11 library
 lib$(LIBNAME).so.$(SOLIBREV): $(OBJS)
@@ -156,24 +134,14 @@ lib$(LIBNAME).so.$(SOLIBREV): $(OBJS)
 	$(MV) $@ lib$(LIBNAME).so
 
 install: $(LIBS)
-#	$(RM) $(INSTALL_DIR)/lib$(LIBNAME).so; \
-#	$(CP) lib$(LIBNAME).so $(INSTALL_DIR)
+	$(RM) $(INSTALL_DIR)/lib$(LIBNAME).so; \
+	$(CP) lib$(LIBNAME).so $(INSTALL_DIR)
 #	@MAJREV=`expr $(SOLIBREV) : '\(.*\)\.'`; set -x; \
 #	$(RM) $(INSTALL_DIR)/lib$(LIBNAME).so.$$MAJREV; \
 	$(MV) lib$(LIBNAME).so.$$MAJREV $(INSTALL_DIR)
 #	$(RM) $(INSTALL_DIR)/lib$(LIBNAME).so.$(SOLIBREV); \
 	$(MV) lib$(LIBNAME).so.$(SOLIBREV) $(INSTALL_DIR)
-	
-	echo "Installing headers ..."
-	$(INSTALL_DIR_D) $(HDRINSTALLDIR)
-	$(INSTALL_HDR)   $(X11_INCLUDE)/X11/*.h $(HDRINSTALLDIR)
-	
-	echo "Installing libNX11 ..."
-	$(INSTALL_LIB) lib$(LIBNAME).a $(LIBINSTALLDIR)/lib$(LIBNAME).a
-	
-#	$(RM) $(INSTALL_DIR)/lib/lib$(LIBNAME).a
-#	$(CP) lib$(LIBNAME).a $(INSTALL_DIR)/lib/lib$(LIBNAME).a
-#	$(CP) X11 $(INSTALL_DIR)/lib/include/ -r
+#	$(MV) lib$(LIBNAME).a $(INSTALL_DIR)
 
 clean: cleanlibs
 	$(RM) *.o *~
@@ -186,13 +154,13 @@ cleanlibs:
 	$(RM) lib$(LIBNAME).so.$(SOLIBREV)
 
 distclean: clean
-	rm -f keysymstr.h
+	$(RM) -f keysymstr.h
 
 keysymstr.h: 
 	perl ./keymap.pl $(X11_INCLUDE)/X11 > ./keysymstr.h
 
 tt: tt.o $(LIBS)
-	cc -o tt tt.c -L. -lnx11 $(SOEXTRALIBS)
+	$(CC) -o tt tt.c -L. -lnx11 $(SOEXTRALIBS)
 
 .SUFFIXES:
 .SUFFIXES: .c .o

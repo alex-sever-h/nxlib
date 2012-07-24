@@ -22,7 +22,7 @@
 #include <nano-X.h>
 
 #include <stdio.h>
-#include <string.h>
+#include <strings.h>
 #include <malloc.h>
 
 /* malloc stuff*/
@@ -49,8 +49,7 @@
 #endif
 
 /* defines for unmodified (Xrm) Xlib routines...*/
-#define bzero(mem, size)	memset(mem, 0, size)
-
+//#define bzero(mem, size)	memset(mem, 0, size)
 #define LockDisplay(dpy)
 #define UnlockDisplay(dpy)
 #define _XLockMutex(lock)

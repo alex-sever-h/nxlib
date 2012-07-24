@@ -6,7 +6,18 @@
 include $(RTEMS_MAKEFILE_PATH)/Makefile.inc
 # The following picks up LDFLAGS, etc for this BSP
 include $(RTEMS_CUSTOM)
+include $(CONFIG.CC)
 
+INSTALL_DIR=$(RTEMS_MAKEFILE_PATH)
+
+HDRINSTALLDIR = $(INSTALL_DIR)/lib/include
+LIBINSTALLDIR = $(INSTALL_DIR)/lib
+BININSTALLDIR = $(INSTALL_DIR)/bin
+
+INSTALL_DIR = install -c -m 755  -d
+INSTALL_HDR = install -c -m 644
+INSTALL_LIB = install -c -m 644
+INSTALL_BIN = install -c -m 755
 
 export STRIP = $(AS:as=strip)
 export RTEMS_CC = $(CC_FOR_TARGET) $(GCCSPECS)
@@ -15,14 +26,35 @@ export RTEMS_TARGET = $(AS:-as=)
 export TOOLS_PREFIX = $(AS:as=)
 export LDFLAGS
 
+VARIABLES_SET += CC="$(CC)"
+VARIABLES_SET += CXX="$(CXX)" 
+VARIABLES_SET += LD="$(LD)"
+VARIABLES_SET += LN="$(LD)" 
+VARIABLES_SET += AR="$(AR)" 
+
+VARIABLES_SET += MWIN_INCLUDE=$(RTEMS_MAKEFILE_PATH)/lib/include/ 
+VARIABLES_SET += MWIN_LIB=$(RTEMS_MAKEFILE_PATH)/lib/ 
+
+VARIABLES_SET += X11_INCLUDE=. 
+VARIABLES_SET += X11_RGBTXT=fonts/rgb.txt 
+
+VARIABLES_SET += LIBNAME=X11 
+VARIABLES_SET += SHAREDLIB=N 
+
+
 all: 
-	@$(MAKE) -f Makefile $@
+	$(MAKE) -f Makefile $@  $(VARIABLES_SET)
 
 install:
-	@$(MAKE) -f Makefile $@
+	echo "Installing headers ..."
+	$(INSTALL_DIR) $(HDRINSTALLDIR)/X11
+	$(INSTALL_HDR) $(X11_INCLUDE)/X11/*.h $(HDRINSTALLDIR)/X11/
+	
+	echo "Installing lib$(LIBNAME).a ..."
+	$(INSTALL_LIB) lib$(LIBNAME).a $(LIBINSTALLDIR)/lib$(LIBNAME).a
 
 clean:
-	@$(MAKE) -f Makefile $@
+	$(MAKE) -f Makefile $@ $(VARIABLES_SET)
 	#rm -rf rtems/rootfs rtems/FilesystemImage* rtems/stamp-filesystem
 
 var:
@@ -31,6 +63,8 @@ var:
 	@echo HDRINSTALLDIR=$(HDRINSTALLDIR)
 	@echo LIBINSTALLDIR=$(LIBINSTALLDIR)
 	@echo CC=$(CC)
+	@echo AR=$(AR)
+	@echo RTEMS_CC=$(RTEMS_CC)
 	@echo CXX=$(CXX)
 	@echo RTEMS_BSP=$(RTEMS_BSP)
 	@echo PROJECT_ROOT=$(PROJECT_ROOT)
@@ -38,6 +72,9 @@ var:
 	@echo PREFIX=$(PREFIX)
 	@echo TOOLS_PREFIX=$(TOOLS_PREFIX)
 	@echo RTEMS_INSTALL=$(RTEMS_INSTALL)
+	@echo INCLUDES=$(INCLUDES)
+	@echo CPPFLAGS=$(CPPFLAGS)
+	@echo CFLAGS=$(CFLAGS)
 	@echo LDFLAGS=$(LDFLAGS)
+	@echo VARIABLES_SET=$(VARIABLES_SET)
 	@exit 0
-

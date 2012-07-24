@@ -6,13 +6,19 @@
 #include "X11/Xutil.h"
 #include "keysymstr.h"
 
-//#if linux
+#if linux | __rtems__
 #include <stdlib.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
-#include <rtems/keyboard.h>
-#include <rtems/kd.h>
+
+#if linux
+  #include <linux/keyboard.h>
+  #include <linux/kd.h>
+#elif __rtems__
+  #include <rtems/keyboard.h>
+  #include <rtems/kd.h>
+#endif
 
 #define KEYBOARD "/dev/tty0"		/* device to get keymappings from*/
 
@@ -21,7 +27,7 @@
 static unsigned short	os_keymap[NUM_VGAKEYMAPS][NR_KEYS];
 static MWKEYMOD modstate;
 static int map_loaded = 0;
-//#endif /* linux*/
+#endif /* linux | __rtems__*/
 
 /* Standard keymapings for kernel values */
 /* (from microwin/src/drivers/keymap_standard.h)*/
