@@ -21,7 +21,7 @@ printc(char *str, XCharStruct *cs)
 }
 
 int
-rtems_main(int ac, char **av)
+main(int ac, char **av)
 {
 	Display *d;
 	XFontStruct *fs;

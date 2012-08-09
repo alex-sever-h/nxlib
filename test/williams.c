@@ -59,7 +59,7 @@ A]; }Ne(l,30); Y==1){ E;K; } else    c=l.t=0;} Y==1&&h<H    -75&&!N(p*77)){ do{ 
                              B=sprintf(m,Q,v,S); XDrawString(d,w
                                      ,g,W/3,H/2,m,B); } }
 
-rtems_main ()
+main ()
 {
 O i=2;
 d=XOpenDisplay(0);
