@@ -15,12 +15,15 @@
 #if linux
   #include <linux/keyboard.h>
   #include <linux/kd.h>
+  #define KEYBOARD "/dev/tty0"		/* device to get keymappings from*/
 #elif __rtems__
   #include <rtems/keyboard.h>
   #include <rtems/kd.h>
+  #define KEYBOARD "/dev/console"		/* device to get keymappings from*/
+#else
+  #define KEYBOARD "/dev/tty0"
 #endif
 
-#define KEYBOARD "/dev/tty0"		/* device to get keymappings from*/
 
 /* kernel unicode tables per shiftstate and scancode*/
 #define NUM_VGAKEYMAPS	(1<<KG_CAPSSHIFT)	/* kernel key maps*/
@@ -65,7 +68,7 @@ MWKEY_LMETA, MWKEY_RMETA, MWKEY_MENU					/* 125*/
 static void
 LoadKernelKeymaps(void)
 {
-  #if linux | __rtems__
+  #if linux
 	int 		map, i;
 	struct kbentry 	entry;
 	char *		kbd;
@@ -284,7 +287,11 @@ XRefreshKeyboardMapping(XMappingEvent* event)
 KeySym
 XKeycodeToKeysym(Display *dpy, unsigned int kc, int index)
 {
-	int	i;
+#if __rtems__
+    //for RTEMS, the kbd driver sends the keycode directly, not the scancode
+    return kc;
+#else
+        int	i;
 	MWKEY	mwkey;
 
 	if (kc > 127)
@@ -301,6 +308,7 @@ XKeycodeToKeysym(Display *dpy, unsigned int kc, int index)
 
 	/* assume X KeySym is same as MWKEY value*/
 	return mwkey;
+#endif
 }
 
 /* translate event->keycode into KeySym, no control/shift processing*/
@@ -365,8 +373,13 @@ XLookupString(XKeyEvent *event, char *buffer, int nbytes, KeySym *keysym,
 	}
 
 	*keysym = k;
-	if (nbytes > 0)
-		buffer[0] = '\0';
+
+	//build string with 1 letter
+	if (nbytes >= 2)
+	  {
+	    buffer[0] = (char)k;
+	    buffer[1] = '\0';
+	  }
 	return 0;
 }
 
