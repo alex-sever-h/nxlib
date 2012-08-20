@@ -12,7 +12,9 @@ all:
 	$(CC) -o williams williams.c   rtems_main.c $(LIBS) $(LDFLAGS) $(CFLAGS) $(LDLIBS) 
 	$(CC) -o queryfont queryfont.c rtems_main.c $(LIBS) $(LDFLAGS) $(CFLAGS) $(LDLIBS)
 	$(CC) -o loadfont loadfont.c   rtems_main.c $(LIBS) $(LDFLAGS) $(CFLAGS) $(LDLIBS)
+	$(CC) -o xev      xev.c        rtems_main.c $(LIBS) $(LDFLAGS) $(CFLAGS) $(LDLIBS)
 clean:
 	rm williams
 	rm queryfont
 	rm loadfont
+	rm xev
